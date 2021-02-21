@@ -97,6 +97,9 @@ namespace enact {
         [[nodiscard]] const std::size_t& get_code_offset() const;
         [[nodiscard]] const std::vector<uint64_t>& get_stack() const;
 
+        void update_stack_top(uint64_t);
+        void update_code_offset(std::size_t);
+
         void reset_stack();
         std::uint64_t pop_from_stack();
         void push_onto_stack(std::uint64_t);
