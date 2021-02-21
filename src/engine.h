@@ -23,7 +23,34 @@ namespace enact {
 
         int run(EngineInitializer);
 
+        std::size_t get_number_of_errors() const;
+        std::size_t get_number_of_warnings() const;
+
     private:
+        template <typename T>
+        bool print_location_if_possible(const T&) const;
+
+        template <typename ...Args>
+        void print_issue_tail(Args&&...) const;
+        void print_issue_tail() const;
+
+        template <typename T, typename ...Args> 
+        void report_warning(const T&, Args&&...);
+
+        template <typename T, typename ...Args> 
+        void report_error(const T&, Args&&...);
+
+        template <typename T, typename ...Args> 
+        void report_fatal_error(const T&, Args&&...);
+
+        void increment_number_of_errors();
+        void increment_number_of_warnings();
+
+        struct {
+            std::size_t number_of_errors {0};
+            std::size_t number_of_warnings {0};
+        } issues;
+
         void initialize_code(const std::uint8_t*);
         void initialize_constants(const std::uint8_t*);
         void initialize_heap(std::size_t);
@@ -69,6 +96,76 @@ namespace enact {
         void reset_stack();
         std::uint64_t pop_from_stack();
         void push_onto_stack(std::uint64_t);
+
+        void execute_op_add();
+        void execute_op_sub();
+        void execute_op_mul();
+        void execute_op_div();
+        void execute_op_mod();
+        void execute_op_pow();
+
+        void execute_op_uadd();
+        void execute_op_usub();
+        void execute_op_umul();
+        void execute_op_udiv();
+        void execute_op_umod();
+        void execute_op_upow();
+
+        void execute_op_shl();
+        void execute_op_shr();
+
+        void execute_op_inc();
+        void execute_op_dec();
+
+        void execute_op_cmp();
+
+        void execute_op_and();
+        void execute_op_or();
+        void execute_op_not();
+        void execute_op_xor();
+
+        void execute_op_equ();
+        void execute_op_neq();
+        void execute_op_gtr();
+        void execute_op_gte();
+        void execute_op_lst();
+        void execute_op_lte();
+
+        void execute_op_jmp();
+        void execute_op_jt();
+        void execute_op_jf();
+        void execute_op_jz();
+        void execute_op_jnz();
+        void execute_op_je();
+        void execute_op_jne();
+        void execute_op_jl();
+        void execute_op_jnl();
+        void execute_op_jle();
+        void execute_op_jnle();
+        void execute_op_jg();
+        void execute_op_jng();
+        void execute_op_jge();
+        void execute_op_jnge();
+
+        void execute_op_xchg();
+        void execute_op_iconst();
+
+        void execute_op_pop();
+        void execute_op_iload();
+        void execute_op_istore();
+
+        void execute_op_int();
+        void execute_op_nop();
+        void execute_op_lea();
+        void execute_op_rand();
+
+        void execute_op_puts();
+        void execute_op_putc();
+
+        void execute_op_dup();
+        void execute_op_dump();
+
+        void execute_op_halt();
 
         struct {
             const std::uint8_t* constants;
