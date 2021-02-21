@@ -122,15 +122,17 @@ namespace enact {
     }
 
     void Engine::free_heap() {
-        if (get_heap_data() != NULL) {
-            std::free(get_heap_data());
-            runtime_data.heap.data = NULL;
+        if (get_heap_data() == NULL) {
+            return;
         }
+
+        std::free(get_heap_data());
+        runtime_data.heap.data = NULL;
     }
 
     void Engine::initialize_code(const std::uint8_t* code) {
         runtime_data.code.data = code;
-        get_code_offset() = 0;
+        update_code_offset(0);
     }
 
     void Engine::initialize_constants(const uint8_t* constants) {
@@ -232,13 +234,9 @@ namespace enact {
     }
 
     int Engine::run(EngineInitializer initializer) {
-        const auto initialize_all = [&]() {
-            initialize_constants(initializer.constants);
-            initialize_code(initializer.code);
-            initialize_heap(initializer.heap_size);
-        };
-
-        initialize_all();
+        initialize_constants(initializer.constants);
+        initialize_code(initializer.code);
+        initialize_heap(initializer.heap_size);
 
         while (1) {
             auto temp = read_code<uint16_t>();
@@ -441,62 +439,32 @@ namespace enact {
 
     void Engine::execute_op_equ() {
         const auto second_value = pop_from_stack();
-        if (second_value == get_stack_top()) {
-            update_stack_top(1);
-        }
-        else {
-            update_stack_top(0);
-        }
+        update_stack_top(second_value == get_stack_top() ? 1 : 0);
     }
 
     void Engine::execute_op_neq() {
         const auto second_value = pop_from_stack();
-        if (second_value != get_stack_top()) {
-            update_stack_top(1);
-        }
-        else {
-            update_stack_top(0);
-        }
+        update_stack_top(second_value != get_stack_top() ? 1 : 0);
     }
 
     void Engine::execute_op_gtr() {
         const auto second_value = pop_from_stack();
-        if (get_stack_top() > second_value) {
-            update_stack_top(1);
-        }
-        else {
-            update_stack_top(0);
-        }
+        update_stack_top(get_stack_top() > second_value ? 1 : 0);
     }
 
     void Engine::execute_op_gte() {
         const auto second_value = pop_from_stack();
-        if (get_stack_top() >= second_value) {
-            update_stack_top(1);
-        }
-        else {
-            update_stack_top(0);
-        }
+        update_stack_top(get_stack_top() >= second_value ? 1 : 0);
     }
 
     void Engine::execute_op_lst() {
         const auto second_value = pop_from_stack();
-        if (get_stack_top() < second_value) {
-            update_stack_top(1);
-        }
-        else {
-            update_stack_top(0);
-        }
+        update_stack_top(get_stack_top() < second_value ? 1 : 0);
     }
 
     void Engine::execute_op_lte() {
         const auto second_value = pop_from_stack();
-        if (get_stack_top() <= second_value) {
-            update_stack_top(1);
-        }
-        else {
-            update_stack_top(0);
-        }
+        update_stack_top(get_stack_top() <= second_value ? 1 : 0);
     }
 
     void Engine::execute_op_jmp() {
@@ -505,32 +473,28 @@ namespace enact {
 
     void Engine::execute_op_jt() {
         const auto target = pop_from_stack();
-        const auto condition = pop_from_stack();
-        if (condition > 0) {
+        if (pop_from_stack() > 0) {
             update_code_offset(target);
         }
     }
 
     void Engine::execute_op_jf() {
         const auto target = pop_from_stack();
-        const auto condition = pop_from_stack();
-        if (condition == 0) {
+        if (pop_from_stack() == 0) {
             update_code_offset(target);
         }
     }
 
     void Engine::execute_op_jz() {
         const auto target = pop_from_stack();
-        const auto value = pop_from_stack();
-        if (value == 0) {
+        if (pop_from_stack() == 0) {
             update_code_offset(target);
         }
     }
 
     void Engine::execute_op_jnz() {
         const auto target = pop_from_stack();
-        const auto value = pop_from_stack();
-        if (value != 0) {
+        if (pop_from_stack() != 0) {
             update_code_offset(target);
         }
     }
@@ -538,8 +502,7 @@ namespace enact {
     void Engine::execute_op_je() {
         const auto target = pop_from_stack();
         const auto second_value = pop_from_stack();
-        const auto first_value = pop_from_stack();
-        if (first_value == second_value) {
+        if (pop_from_stack() == second_value) {
             update_code_offset(target);
         }
     }
@@ -547,8 +510,7 @@ namespace enact {
     void Engine::execute_op_jne() {
         const auto target = pop_from_stack();
         const auto second_value = pop_from_stack();
-        const auto first_value = pop_from_stack();
-        if (first_value != second_value) {
+        if (pop_from_stack() != second_value) {
             update_code_offset(target);
         }
     }
@@ -556,8 +518,7 @@ namespace enact {
     void Engine::execute_op_jl() {
         const auto target = pop_from_stack();
         const auto second_value = pop_from_stack();
-        const auto first_value = pop_from_stack();
-        if (first_value < second_value) {
+        if (pop_from_stack() < second_value) {
             update_code_offset(target);
         }
     }
@@ -565,8 +526,7 @@ namespace enact {
     void Engine::execute_op_jnl() {
         const auto target = pop_from_stack();
         const auto second_value = pop_from_stack();
-        const auto first_value = pop_from_stack();
-        if (first_value >= second_value) {
+        if (pop_from_stack() >= second_value) {
             update_code_offset(target);
         }
     }
@@ -574,8 +534,7 @@ namespace enact {
     void Engine::execute_op_jle() {
         const auto target = pop_from_stack();
         const auto second_value = pop_from_stack();
-        const auto first_value = pop_from_stack();
-        if (first_value <= second_value) {
+        if (pop_from_stack() <= second_value) {
             update_code_offset(target);
         }
     }
@@ -587,8 +546,7 @@ namespace enact {
     void Engine::execute_op_jg() {
         const auto target = pop_from_stack();
         const auto second_value = pop_from_stack();
-        const auto first_value = pop_from_stack();
-        if (first_value > second_value) {
+        if (pop_from_stack() > second_value) {
             update_code_offset(target);
         }
     }
