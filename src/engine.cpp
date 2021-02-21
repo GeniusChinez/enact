@@ -222,9 +222,6 @@ namespace enact {
         };
 
         initialize_all();
-        report_error(new Location{.file="sample.cs", .line=32, .column=4}, "something is wrong, bruh");
-        report_warning(new Location{.file="sample.cs", .line=32, .column=4}, "something is wrong, bruh");
-        report_fatal_error(new Location{.file="sample.cs", .line=32, .column=4}, "something is wrong, bruh");
 
         while (1) {
             auto temp = read_code<uint16_t>();
@@ -391,47 +388,98 @@ namespace enact {
     }
 
     void Engine::execute_op_cmp() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        const uint64_t first_value = get_stack_top();
+
+        if (first_value > second_value) {
+            get_stack_top() = 1;
+        }
+        else if (first_value < second_value) {
+            get_stack_top() = -1;
+        }
+        else {
+            get_stack_top() = 0;
+        }
     }
 
     void Engine::execute_op_and() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        get_stack_top() &= second_value;
     }
 
     void Engine::execute_op_or() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        get_stack_top() |= second_value;
     }
 
     void Engine::execute_op_not() {
-        assert(0);
+        const auto result = ~get_stack_top();
+        get_stack_top() = result;
     }
 
     void Engine::execute_op_xor() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        get_stack_top() ^= second_value;
     }
 
     void Engine::execute_op_equ() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        if (second_value == get_stack_top()) {
+            get_stack_top() = 1;
+        }
+        else {
+            get_stack_top() = 0;
+        }
     }
 
     void Engine::execute_op_neq() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        if (second_value != get_stack_top()) {
+            get_stack_top() = 1;
+        }
+        else {
+            get_stack_top() = 0;
+        }
     }
 
     void Engine::execute_op_gtr() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        if (get_stack_top() > second_value) {
+            get_stack_top() = 1;
+        }
+        else {
+            get_stack_top() = 0;
+        }
     }
 
     void Engine::execute_op_gte() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        if (get_stack_top() >= second_value) {
+            get_stack_top() = 1;
+        }
+        else {
+            get_stack_top() = 0;
+        }
     }
 
     void Engine::execute_op_lst() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        if (get_stack_top() < second_value) {
+            get_stack_top() = 1;
+        }
+        else {
+            get_stack_top() = 0;
+        }
     }
 
     void Engine::execute_op_lte() {
-        assert(0);
+        const auto second_value = pop_from_stack();
+        if (get_stack_top() <= second_value) {
+            get_stack_top() = 1;
+        }
+        else {
+            get_stack_top() = 0;
+        }
     }
 
     void Engine::execute_op_jmp() {
