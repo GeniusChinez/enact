@@ -95,7 +95,14 @@ namespace enact {
     IntegerT Engine::get_heap_item(std::size_t offset) const
         requires std::is_integral_v<IntegerT>
     {
-        return *static_cast<IntegerT*>(get_heap_data() + offset);
+        return *(IntegerT*)(get_heap_data() + offset);
+    }
+    
+    template <typename IntegerT=uint64_t>
+    void Engine::put_heap_item(std::size_t offset, IntegerT value) 
+        requires std::is_integral_v<IntegerT>
+    {
+        *(IntegerT*)(get_heap_data() + offset) = value;
     }
 
     void Engine::extend_heap(std::size_t factor) {
@@ -222,6 +229,13 @@ namespace enact {
         };
 
         initialize_all();
+
+        push_onto_stack(23);
+        push_onto_stack(11);
+        execute_op_istore();
+        push_onto_stack(11);
+        execute_op_iload();
+        execute_op_dump();
 
         while (1) {
             auto temp = read_code<uint16_t>();
@@ -589,11 +603,18 @@ namespace enact {
     }
 
     void Engine::execute_op_xchg() {
-        assert(0);
+        const auto second_address = pop_from_stack();
+        const auto first_address = pop_from_stack();
+
+        const auto first_item = get_heap_item<uint64_t>(first_address);
+        const auto second_item = get_heap_item<uint64_t>(second_address);
+
+        put_heap_item(first_address, second_item);
+        put_heap_item(second_address, first_item);
     }
 
     void Engine::execute_op_iconst() {
-        assert(0);
+        push_onto_stack(read_code<uint64_t>());
     }
 
     void Engine::execute_op_pop() {
@@ -601,11 +622,13 @@ namespace enact {
     }
 
     void Engine::execute_op_iload() {
-        assert(0);
+        const auto item = get_heap_item<uint64_t>(get_stack_top());
+        get_stack_top() = item;
     }
 
     void Engine::execute_op_istore() {
-        assert(0);
+        const auto address = pop_from_stack();
+        put_heap_item(address, pop_from_stack());
     }
 
     void Engine::execute_op_int() {
@@ -613,7 +636,7 @@ namespace enact {
     }
 
     void Engine::execute_op_nop() {
-        assert(0);
+        // ...
     }
 
     void Engine::execute_op_lea() {
@@ -637,7 +660,14 @@ namespace enact {
     }
 
     void Engine::execute_op_dump() {
-        assert(0);
+        std::cout << "## Stack: \n";
+
+        auto iter = get_stack().rbegin();
+        const auto end = get_stack().rend();
+
+        while (iter != end) {
+            std::cout << "  " << *iter++ << "\n";
+        }
     }
 
     void Engine::execute_op_halt() {

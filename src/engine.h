@@ -68,6 +68,10 @@ namespace enact {
         IntegerT get_heap_item(std::size_t) const 
             requires std::is_integral_v<IntegerT>;
 
+        template <typename IntegerT=std::uint64_t>
+        void put_heap_item(std::size_t, IntegerT)
+            requires std::is_integral_v<IntegerT>;
+
         void extend_heap(std::size_t);
         void free_heap();
 
