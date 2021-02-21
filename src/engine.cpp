@@ -5,6 +5,8 @@
 #include "location.h"
 
 #include <cmath>
+#include <climits>
+
 #include <iostream>
 
 namespace enact {
@@ -229,13 +231,6 @@ namespace enact {
         };
 
         initialize_all();
-
-        push_onto_stack(23);
-        push_onto_stack(11);
-        execute_op_istore();
-        push_onto_stack(11);
-        execute_op_iload();
-        execute_op_dump();
 
         while (1) {
             auto temp = read_code<uint16_t>();
@@ -644,7 +639,8 @@ namespace enact {
     }
 
     void Engine::execute_op_rand() {
-        assert(0);
+        srand(time(NULL));
+        push_onto_stack(((uint64_t)rand()) % ULLONG_MAX);
     }
 
     void Engine::execute_op_puts() {
@@ -656,7 +652,7 @@ namespace enact {
     }
 
     void Engine::execute_op_dup() {
-        assert(0);
+        push_onto_stack(get_stack_top());
     }
 
     void Engine::execute_op_dump() {
