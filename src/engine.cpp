@@ -483,63 +483,109 @@ namespace enact {
     }
 
     void Engine::execute_op_jmp() {
-        assert(0);
+        get_code_offset() = pop_from_stack();
     }
 
     void Engine::execute_op_jt() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto condition = pop_from_stack();
+        if (condition > 0) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jf() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto condition = pop_from_stack();
+        if (condition == 0) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jz() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto value = pop_from_stack();
+        if (value == 0) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jnz() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto value = pop_from_stack();
+        if (value != 0) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_je() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto second_value = pop_from_stack();
+        const auto first_value = pop_from_stack();
+        if (first_value == second_value) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jne() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto second_value = pop_from_stack();
+        const auto first_value = pop_from_stack();
+        if (first_value != second_value) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jl() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto second_value = pop_from_stack();
+        const auto first_value = pop_from_stack();
+        if (first_value < second_value) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jnl() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto second_value = pop_from_stack();
+        const auto first_value = pop_from_stack();
+        if (first_value >= second_value) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jle() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto second_value = pop_from_stack();
+        const auto first_value = pop_from_stack();
+        if (first_value <= second_value) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jnle() {
-        assert(0);
+        execute_op_jg();
     }
 
     void Engine::execute_op_jg() {
-        assert(0);
+        const auto target = pop_from_stack();
+        const auto second_value = pop_from_stack();
+        const auto first_value = pop_from_stack();
+        if (first_value > second_value) {
+            get_code_offset() = target;
+        }
     }
 
     void Engine::execute_op_jng() {
-        assert(0);
+        execute_op_jle();
     }
 
     void Engine::execute_op_jge() {
-        assert(0);
+        execute_op_jnl();
     }
 
     void Engine::execute_op_jnge() {
-        assert(0);
+        execute_op_jl();
     }
 
     void Engine::execute_op_xchg() {
@@ -551,7 +597,7 @@ namespace enact {
     }
 
     void Engine::execute_op_pop() {
-        assert(0);
+        pop_from_stack();
     }
 
     void Engine::execute_op_iload() {
