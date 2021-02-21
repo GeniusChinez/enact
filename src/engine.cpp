@@ -86,7 +86,7 @@ namespace enact {
     IntegerT Engine::get_integer_constant(std::size_t offset) const 
         requires std::is_integral_v<IntegerT>
     {
-        return *static_cast<IntegerT*>(get_constants() + offset);
+        return *(const IntegerT*)(get_constants() + offset);
     }
 
     const std::uint8_t* Engine::get_string_constant(std::size_t offset) const {
@@ -609,7 +609,8 @@ namespace enact {
     }
 
     void Engine::execute_op_iconst() {
-        push_onto_stack(read_code<uint64_t>());
+        const auto constant_address = read_code<uint64_t>();
+        push_onto_stack(get_integer_constant<uint64_t>(constant_address));
     }
 
     void Engine::execute_op_pop() {
@@ -644,11 +645,13 @@ namespace enact {
     }
 
     void Engine::execute_op_puts() {
-        assert(0);
+        const auto address = pop_from_stack();
+        const auto length = pop_from_stack();
+        printf("%.*s", (int)length, get_heap_data() + address);
     }
 
     void Engine::execute_op_putc() {
-        assert(0);
+        printf("%c", get_heap_item<char>(pop_from_stack()));
     }
 
     void Engine::execute_op_dup() {
@@ -667,7 +670,7 @@ namespace enact {
     }
 
     void Engine::execute_op_halt() {
-        assert(0);
+        std::cout << "exiting...";
     }
 }
 
