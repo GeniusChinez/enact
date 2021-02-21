@@ -1,5 +1,7 @@
 
 #include <iostream>
+
+#include "opcodes.cpp"
 #include "engine.cpp"
 
 int main(int argc, char* const argv[]) {
