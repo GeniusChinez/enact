@@ -305,7 +305,7 @@ namespace enact {
             HANDLE_OPCODE(Dup, execute_op_dup)
             HANDLE_OPCODE(Dump, execute_op_dump)
             default:
-                assert(0 && "unknown opcode");
+                report_fatal_error("unknown opcode: 0x", std::hex, temp);
             }
         }
         return 0;
@@ -380,12 +380,12 @@ namespace enact {
 
     void Engine::execute_op_shl() {
         const auto second_value = pop_from_stack();
-        get_stack_top() >>= second_value;
+        get_stack_top() <<= second_value;
     }
 
     void Engine::execute_op_shr() {
         const auto second_value = pop_from_stack();
-        get_stack_top() <<= second_value;
+        get_stack_top() >>= second_value;
     }
 
     void Engine::execute_op_inc() {
@@ -670,7 +670,7 @@ namespace enact {
     }
 
     void Engine::execute_op_halt() {
-        std::cout << "exiting...";
+        std::cout << "exiting...\n";
     }
 }
 
