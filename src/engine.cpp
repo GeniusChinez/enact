@@ -10,6 +10,11 @@
 #include <iostream>
 
 namespace enact {
+    template <typename T, typename S>
+    T Engine::get_item_at(const S* s) const {
+        return *(const T*)s;
+    }
+
     std::size_t Engine::get_number_of_errors() const {
         return issues.number_of_errors;
     }
@@ -86,7 +91,7 @@ namespace enact {
     IntegerT Engine::get_integer_constant(std::size_t offset) const 
         requires std::is_integral_v<IntegerT>
     {
-        return *(const IntegerT*)(get_constants() + offset);
+        return get_item_at<IntegerT>(get_constants() + offset);
     }
 
     const std::uint8_t* Engine::get_string_constant(std::size_t offset) const {
@@ -97,7 +102,7 @@ namespace enact {
     IntegerT Engine::get_heap_item(std::size_t offset) const
         requires std::is_integral_v<IntegerT>
     {
-        return *(IntegerT*)(get_heap_data() + offset);
+        return get_item_at<IntegerT>(get_heap_data() + offset);
     }
     
     template <typename IntegerT=uint64_t>
@@ -108,21 +113,21 @@ namespace enact {
     }
 
     void Engine::extend_heap(std::size_t factor) {
-        if (auto temp = std::realloc(get_heap_data(), get_heap_size() + factor); 
-            temp
-        ) {
-            runtime_data.heap.data = static_cast<decltype(get_heap_data())>(
-                temp
-            );
-            get_heap_size() += factor;
-        }
-        else {
+        auto temp = std::realloc(get_heap_data(), get_heap_size() + factor);
+
+        if (!temp) {
             throw std::bad_alloc();
         }
+
+        runtime_data.heap.data = static_cast<decltype(runtime_data.heap.data)>(
+            temp
+        );
+
+        get_heap_size() += factor;
     }
 
     void Engine::free_heap() {
-        if (get_heap_data() == NULL) {
+        if (!get_heap_data()) {
             return;
         }
 
