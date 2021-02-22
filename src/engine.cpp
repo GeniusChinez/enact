@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "opcodes.cpp"
 #include "location.h"
+#include "interrupts.h"
 
 #include <cmath>
 #include <climits>
@@ -10,6 +11,11 @@
 #include <iostream>
 
 namespace enact {
+    Engine::Engine() {
+        interrupt_handlers[InputInterrupt] = 
+            std::bind(&Engine::handle_interrupt_input, this);
+    }
+
     std::size_t Engine::get_number_of_errors() const {
         return issues.number_of_errors;
     }
@@ -601,7 +607,7 @@ namespace enact {
     }
 
     void Engine::execute_op_int() {
-        assert(0);
+        interrupt_handlers[pop_from_stack()](this);
     }
 
     void Engine::execute_op_nop() {
@@ -644,6 +650,15 @@ namespace enact {
 
     void Engine::execute_op_halt() {
         std::cout << "exiting...\n";
+    }
+
+    void Engine::handle_interrupt_input() {
+        const auto address = pop_from_stack();
+        std::cin.get(
+            (char*)(get_heap_data() + address), 
+            get_heap_size() - address
+        ); 
+        push_onto_stack(std::cin.gcount());
     }
 }
 

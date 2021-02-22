@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string_view>
+#include <functional>
 
 namespace enact {
     struct EngineInitializer {
@@ -15,7 +16,7 @@ namespace enact {
 
     class Engine {
     public:
-        Engine() = default;
+        Engine();
         Engine(const Engine&) = delete;
         Engine(Engine&&) = delete;
         Engine& operator=(const Engine&) = delete;
@@ -174,6 +175,8 @@ namespace enact {
 
         void execute_op_halt();
 
+        void handle_interrupt_input();
+
         struct {
             const std::uint8_t* constants;
 
@@ -189,5 +192,8 @@ namespace enact {
 
             std::vector<std::uint64_t> stack;
         } runtime_data;
+
+        using InterruptHandler = std::function<void(Engine*)>;
+        std::map<std::size_t, InterruptHandler> interrupt_handlers;
     };
 }
