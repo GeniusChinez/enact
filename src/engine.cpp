@@ -84,7 +84,7 @@ namespace enact {
     template <typename T, typename ...Args> 
     void Engine::report_fatal_error(const T& arg1, Args&&... args) {
         report_error(arg1, std::forward<Args>(args)...);
-        exit(get_number_of_errors());
+        quit(get_number_of_errors(), get_number_of_warnings());
     }
 
     template <typename IntegerT>
@@ -181,7 +181,7 @@ namespace enact {
     T Engine::read_code() 
         requires requires {std::is_integral_v<T>; std::is_unsigned_v<T>; } 
     {
-        const auto data = *(const T*)(get_code() + get_code_offset());
+        const auto data = get_item_at<T>(get_code() + get_code_offset());
         increment_code_offset(sizeof(T));
         return data;
     }
