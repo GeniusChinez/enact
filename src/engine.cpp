@@ -10,11 +10,6 @@
 #include <iostream>
 
 namespace enact {
-    template <typename T, typename S>
-    T Engine::get_item_at(const S* s) const {
-        return *(const T*)s;
-    }
-
     std::size_t Engine::get_number_of_errors() const {
         return issues.number_of_errors;
     }
@@ -91,7 +86,7 @@ namespace enact {
     IntegerT Engine::get_integer_constant(std::size_t offset) const 
         requires std::is_integral_v<IntegerT>
     {
-        return get_item_at<IntegerT>(get_constants() + offset);
+        return read_stored_integer<IntegerT>(get_constants() + offset);
     }
 
     const std::uint8_t* Engine::get_string_constant(std::size_t offset) const {
@@ -102,14 +97,18 @@ namespace enact {
     IntegerT Engine::get_heap_item(std::size_t offset) const
         requires std::is_integral_v<IntegerT>
     {
-        return get_item_at<IntegerT>(get_heap_data() + offset);
+        return read_stored_integer<IntegerT>(get_heap_data() + offset);
     }
     
     template <typename IntegerT=uint64_t>
     void Engine::put_heap_item(std::size_t offset, IntegerT value) 
         requires std::is_integral_v<IntegerT>
     {
-        *(IntegerT*)(get_heap_data() + offset) = value;
+        auto data = get_heap_data() + offset;
+
+        for (std::size_t i = 0; i < sizeof(IntegerT); ++i) {
+            data[i] = 0xff & (value >> (i * 8));
+        }
     }
 
     void Engine::extend_heap(std::size_t factor) {
@@ -181,7 +180,10 @@ namespace enact {
     T Engine::read_code() 
         requires requires {std::is_integral_v<T>; std::is_unsigned_v<T>; } 
     {
-        const auto data = get_item_at<T>(get_code() + get_code_offset());
+        const auto data = read_stored_integer<T>(
+            get_code() + get_code_offset()
+        );
+
         increment_code_offset(sizeof(T));
         return data;
     }

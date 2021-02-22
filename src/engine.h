@@ -27,9 +27,6 @@ namespace enact {
         std::size_t get_number_of_warnings() const;
 
     private:
-        template <typename T, typename S>
-        T get_item_at(const S*) const;
-
         template <typename T>
         bool print_location_if_possible(const T&) const;
 

@@ -88,18 +88,36 @@ namespace enact {
         );
     }
 
-    const byte_stream_t& Assembler::assemble_file(std::string_view filepath) {
-        const auto [fileread, filedata] = read_file(filepath);
+    const byte_stream_t& Assembler::assemble_files(
+        const std::vector<std::string>& filepaths
+    ) {
+        // as a placeholder. It represents the constants poool offset
+        write_integer((uint64_t)0);
 
-        if (!fileread) {
-            report_fatal_error("could not open input file: ", filepath.data());
+        for (const auto& filepath : filepaths) {
+            const auto [fileread, filedata] = read_file(filepath);
+
+            if (!fileread) {
+                report_fatal_error(
+                    "could not open input file: ", 
+                    filepath.data()
+                );
+            }
+
+            source.filepath = filepath.data();
+            source.data = std::move(filedata);
+            source.data_iter = std::begin(source.data);
+
+            read_all_instructions();
+
+            source.current_char = 1;
+            source.position.line = 1;
+            source.position.column = 0;
         }
-        
-        source.filepath = filepath.data();
-        source.data = std::move(filedata);
-        source.data_iter = std::begin(source.data);
 
-        start();
+        fill_in_locations_waiting_for_constants();
+        combine_constants_and_code();
+
         return reap();
     }
 
@@ -152,13 +170,7 @@ namespace enact {
     }
 
     void Assembler::start() {
-        // as a placeholder. It represents the constants poool offset
-        write_integer(0); 
-
-        read_all_instructions();
-        fill_in_locations_waiting_for_constants();
-
-        combine_constants_and_code();
+        // ...
     }
 
     void Assembler::read_all_instructions() {
@@ -364,7 +376,7 @@ namespace enact {
         const std::size_t location = constant_pool.size();
 
         for (std::size_t i = 0; i < sizeof(IntType); ++i) {
-            constant_pool.push_back(0xff && (value >> i));
+            constant_pool.push_back(0xff & (value >> (i * 8)));
         }
 
         return location;
@@ -425,8 +437,8 @@ namespace enact {
     void Assembler::write_integer(IntType value) 
         requires std::is_integral_v<IntType>
     {
-        for (std::size_t i = 0; i < sizeof(IntType); i += 1) {
-            output_data.push_back(0xff && (value >> (i * 8)));
+        for (std::size_t i = 0; i < sizeof(IntType); ++i) {
+            output_data.push_back(0xff & (value >> (i * 8)));
         }
     }
 
@@ -439,7 +451,7 @@ namespace enact {
         std::uint64_t constant_pool_offset = output_data.size();
 
         for (std::size_t i = 0; i < 8; ++i) {
-            output_data[temp_offset++] = 0xff && 
+            output_data[temp_offset++] = 0xff & 
                 (constant_pool_offset >> (i * 8));
         }
 
@@ -450,16 +462,15 @@ namespace enact {
         );
     }
 
-    byte_stream_t assemble_file(std::string_view filepath) {
-        return Assembler{}.assemble_file(filepath);
+    byte_stream_t assemble_files(const std::vector<std::string>& filepaths) {
+        return Assembler{}.assemble_files(filepaths);
     }
 
-    void assemble_file_to_file(
-        std::string_view src,
-        std::string_view dest="a.asm"
+    void write_code_to_file(
+        const byte_stream_t& code, 
+        std::string_view filepath
     ) {
-        auto code = Assembler{}.assemble_file(src);
-        std::fstream os(dest.data(), std::ios::out | std::ios::binary);
+        std::fstream os(filepath.data(), std::ios::out/* | std::ios::binary*/);
 
         auto iter = std::begin(code);
         while (iter != std::end(code)) {
@@ -467,5 +478,13 @@ namespace enact {
         }
 
         os.close();
+    }
+
+    void assemble_files_to_file(
+        const std::vector<std::string>& filepaths,
+        std::string_view dest="output.asm"
+    ) {
+        auto code = Assembler{}.assemble_files(filepaths);
+        write_code_to_file(code, dest);
     }
 }

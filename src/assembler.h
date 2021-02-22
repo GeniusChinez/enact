@@ -22,7 +22,7 @@ namespace enact {
     public:
         Assembler() = default;
 
-        const byte_stream_t& assemble_file(std::string_view);
+        const byte_stream_t& assemble_files(const std::vector<std::string>&);
 
         [[nodiscard]] 
         const byte_stream_t& reap() const;
