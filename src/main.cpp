@@ -14,7 +14,6 @@ void quit(std::size_t number_of_errors, std::size_t number_of_warnings) {
 
     exit(number_of_errors);
 }
-//(78 << 0) + (97 << 8) + (188 << 16) + (0 << 24)
 
 template <typename IntType>
 IntType read_stored_integer(const std::uint8_t* src) {

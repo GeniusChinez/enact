@@ -220,7 +220,7 @@ namespace enact {
         std::size_t position,
         std::size_t location
     ) {
-        for (std::size_t i = 0; i < 8; ++i) {
+        for (std::size_t i = 0; i < sizeof(uint64_t); ++i) {
             output_data[position++] = (0xff & (location >> (i * 8)));
         }
     }
@@ -261,7 +261,13 @@ namespace enact {
 
     void Assembler::read_label(std::string&& name) {
         get_next_char();
-        record_constant_location(name, output_data.size());
+        record_constant_location(
+            name, 
+
+            // we need to subtract the first sizeof(uint64_t) bytes taken up by 
+            // the constant_pool offset in the returned code.
+            add_integer_constant(output_data.size() - sizeof(uint64_t))
+        );
     }
 
     void Assembler::read_constant_definition(std::string&& name) {
@@ -450,7 +456,7 @@ namespace enact {
         std::size_t temp_offset = 0;
         std::uint64_t constant_pool_offset = output_data.size();
 
-        for (std::size_t i = 0; i < 8; ++i) {
+        for (std::size_t i = 0; i < sizeof(uint64_t); ++i) {
             output_data[temp_offset++] = 0xff & 
                 (constant_pool_offset >> (i * 8));
         }
