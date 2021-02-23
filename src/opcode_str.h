@@ -33,6 +33,7 @@ namespace enact {
         case Opcode::Dec: return "dec";
 
         case Opcode::Cmp: return "cmp";
+        case Opcode::Neg: return "neg";
 
         case Opcode::And: return "and";
         case Opcode::Or: return "or";
@@ -112,6 +113,7 @@ namespace enact {
         OPCODE_STRING_ENTRY(Dec),
 
         OPCODE_STRING_ENTRY(Cmp),
+        OPCODE_STRING_ENTRY(Neg),
 
         OPCODE_STRING_ENTRY(And),
         OPCODE_STRING_ENTRY(Or),

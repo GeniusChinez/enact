@@ -26,6 +26,7 @@ namespace enact {
         Dec,
 
         Cmp,
+        Neg,
 
         // logical
         And,

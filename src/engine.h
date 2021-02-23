@@ -126,6 +126,7 @@ namespace enact {
         void execute_op_dec();
 
         void execute_op_cmp();
+        void execute_op_neg();
 
         void execute_op_and();
         void execute_op_or();

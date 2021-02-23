@@ -280,6 +280,7 @@ namespace enact {
             HANDLE_OPCODE(Inc, execute_op_inc)
             HANDLE_OPCODE(Dec, execute_op_dec)
             HANDLE_OPCODE(Cmp, execute_op_cmp)
+            HANDLE_OPCODE(Neg, execute_op_neg)
             HANDLE_OPCODE(And, execute_op_and)
             HANDLE_OPCODE(Or, execute_op_or)
             HANDLE_OPCODE(Not, execute_op_not)
@@ -423,6 +424,10 @@ namespace enact {
         else {
             update_stack_top(0);
         }
+    }
+
+    void Engine::execute_op_neg() {
+        get_stack_top() *= -1;
     }
 
     void Engine::execute_op_and() {
