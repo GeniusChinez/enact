@@ -190,6 +190,13 @@ namespace enact {
                 break;
             }
 
+            if (get_current_char() == '#') {
+                while ((!data_ended()) && get_next_char() != '\n') {
+                    // ...
+                }
+                continue;
+            }
+
             report_fatal_error_here(
                 "expected an alphabet, but found: 0x", 
                 std::hex,
