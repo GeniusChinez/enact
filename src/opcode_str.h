@@ -79,7 +79,10 @@ namespace enact {
 
         case Opcode::Dup: return "dup";
         case Opcode::Dump: return "dump";
+
+        case Opcode::Flip: return "flip";
         case Opcode::Halt: return "halt";
+
         default:
             assert(0);
             return "<unknown-opcode>";
@@ -160,6 +163,7 @@ namespace enact {
         OPCODE_STRING_ENTRY(Dup), 
         OPCODE_STRING_ENTRY(Dump), 
 
+        OPCODE_STRING_ENTRY(Flip),
         OPCODE_STRING_ENTRY(Halt),
     };
 

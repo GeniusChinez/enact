@@ -78,6 +78,8 @@ namespace enact {
         Dup, 
         Dump, 
 
+        Flip,
+
         Halt,
     };
 }

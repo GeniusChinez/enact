@@ -174,6 +174,8 @@ namespace enact {
         void execute_op_dup();
         void execute_op_dump();
 
+        void execute_op_flip();
+
         void execute_op_halt();
 
         void handle_interrupt_input();

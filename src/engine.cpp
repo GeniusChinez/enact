@@ -318,6 +318,7 @@ namespace enact {
             HANDLE_OPCODE(Puts, execute_op_puts)
             HANDLE_OPCODE(Putc, execute_op_putc)
             HANDLE_OPCODE(Dup, execute_op_dup)
+            HANDLE_OPCODE(Flip, execute_op_flip)
             HANDLE_OPCODE(Dump, execute_op_dump)
             default:
                 report_fatal_error("unknown opcode: 0x", std::hex, temp);
@@ -654,6 +655,13 @@ namespace enact {
         while (iter != end) {
             std::cout << "  " << *iter++ << "\n";
         }
+    }
+
+    void Engine::execute_op_flip() {
+        const uint64_t above = pop_from_stack();
+        const uint64_t below = get_stack_top();
+        update_stack_top(above);
+        push_onto_stack(below);
     }
 
     void Engine::execute_op_halt() {
