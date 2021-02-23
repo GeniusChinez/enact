@@ -1,100 +1,128 @@
+iconst example1
+jmp
+
 # relational equals
-    iconst 3
-    iconst 3
-    equ
+    example1:
+        iconst 3
+        iconst 3
+        equ
 
-    iconst 3
-    iconst 4
-    equ
+        iconst 3
+        iconst 4
+        equ
 
-    dump
+        dump
 
-    pop
-    pop
+        pop
+        pop
+
+    iconst exit
+    jmp
 
 # relational not equals
-    iconst 3
-    iconst 3
-    neq
+    example2:
+        iconst 3
+        iconst 3
+        neq
 
-    iconst 3
-    iconst 4
-    neq
+        iconst 3
+        iconst 4
+        neq
 
-    dump
+        dump
 
-    pop
-    pop
+        pop
+        pop
+
+    iconst exit
+    jmp
 
 # relational greater than
-    iconst 3
-    iconst 3
-    gtr
+    example3:
+        iconst 3
+        iconst 3
+        gtr
 
-    iconst 3
-    iconst 4
-    gtr
+        iconst 3
+        iconst 4
+        gtr
 
-    iconst 4
-    iconst 3
-    gtr
+        iconst 4
+        iconst 3
+        gtr
 
-    dump
+        dump
 
-    pop
-    pop
-    pop
+        pop
+        pop
+        pop
+
+    iconst exit
+    jmp
 
 # relational greater than or equals
-    iconst 3
-    iconst 3
-    gte
+    example4:
+        iconst 3
+        iconst 3
+        gte
 
-    iconst 3
-    iconst 4
-    gte
+        iconst 3
+        iconst 4
+        gte
 
-    iconst 4
-    iconst 3
-    gte
+        iconst 4
+        iconst 3
+        gte
 
-    dump
+        dump
 
-    pop
-    pop
-    pop
+        pop
+        pop
+        pop
+
+    iconst exit
+    jmp
 
 # relational less than
-    iconst 3
-    iconst 3
-    lst
+    example5:
+        iconst 3
+        iconst 3
+        lst
 
-    iconst 3
-    iconst 4
-    lst
+        iconst 3
+        iconst 4
+        lst
 
-    dump
+        dump
 
-    pop
-    pop
+        pop
+        pop
+
+    iconst exit
+    jmp
 
 # relational less than or equals
-    iconst 3
-    iconst 3
-    lte
+    example6:
+        iconst 3
+        iconst 3
+        lte
 
-    iconst 3
-    iconst 4
-    lte
+        iconst 3
+        iconst 4
+        lte
 
-    iconst 5
-    iconst 4
-    lte
+        iconst 5
+        iconst 4
+        lte
 
-    dump
+        dump
 
-    pop
-    pop
-    pop
+        pop
+        pop
+        pop
 
-halt
+    iconst exit
+    jmp
+
+exit:
+    halt

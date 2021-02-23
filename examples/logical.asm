@@ -1,28 +1,48 @@
+iconst example1
+jmp
+
 # logical AND
-    iconst 7
-    iconst 3
-    and
-    dump
-    pop
+    example1:
+        iconst 7
+        iconst 3
+        and
+        dump
+        pop
+
+    iconst exit
+    jmp
 
 # logical OR 
-    iconst 4
-    iconst 1
-    or
-    dump
-    pop
+    example2:
+        iconst 4
+        iconst 1
+        or
+        dump
+        pop
+
+    iconst exit
+    jmp
 
 # logical NOT 
-    iconst 8
-    not
-    dump
-    pop
+    example3:
+        iconst 8
+        not
+        dump
+        pop
+
+        iconst exit
+        jmp
 
 # logical XOR
-    iconst 4
-    iconst 8
-    xor
-    dump
-    pop
+    example4:
+        iconst 4
+        iconst 8
+        xor
+        dump
+        pop
 
-halt
+    iconst exit
+    jmp
+
+exit:
+    halt

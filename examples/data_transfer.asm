@@ -1,4 +1,4 @@
-iconst example5
+iconst example1
 jmp
 
 # exchanging data
