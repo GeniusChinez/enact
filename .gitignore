@@ -6,4 +6,4 @@
 *.txt
 *.py
 *.c
-*.asm
+src/*.asm
