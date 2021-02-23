@@ -16,7 +16,7 @@ namespace enact {
 
     class Engine {
     public:
-        Engine();
+        Engine() = default;
         Engine(const Engine&) = delete;
         Engine(Engine&&) = delete;
         Engine& operator=(const Engine&) = delete;
@@ -192,8 +192,5 @@ namespace enact {
 
             std::vector<std::uint64_t> stack;
         } runtime_data;
-
-        using InterruptHandler = std::function<void(Engine*)>;
-        std::map<std::size_t, InterruptHandler> interrupt_handlers;
     };
 }

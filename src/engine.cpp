@@ -11,11 +11,6 @@
 #include <iostream>
 
 namespace enact {
-    Engine::Engine() {
-        interrupt_handlers[InputInterrupt] = 
-            std::bind(&Engine::handle_interrupt_input, this);
-    }
-
     std::size_t Engine::get_number_of_errors() const {
         return issues.number_of_errors;
     }
@@ -607,7 +602,15 @@ namespace enact {
     }
 
     void Engine::execute_op_int() {
-        interrupt_handlers[pop_from_stack()](this);
+        const auto number = pop_from_stack();
+        switch (number) {
+        case InputInterrupt: {
+            handle_interrupt_input();
+            break;
+        }
+        default:
+            report_fatal_error("unknown interrupt: 0x", std::hex, number);
+        }
     }
 
     void Engine::execute_op_nop() {
